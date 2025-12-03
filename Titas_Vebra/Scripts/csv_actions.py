@@ -1,25 +1,49 @@
 import pandas as pd
+import numpy as np
 
-def remove_empty_rows_and_columns(df: pd.DataFrame) -> pd.DataFrame:
+def remove_rows_and_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     # print('Removing completely empty rows and columns...')
     # Work on a copy so you don't mutate original by accident
     df_clean = df.copy()
+    df_clean = df_clean.replace(r'^\s*$', np.nan, regex=True)
 
-    # 1. Turn pure-whitespace cells into NaN (but keep other values)
-    df_clean = df_clean.replace(r'^\s*$', pd.NA, regex=True)
+    # what to remove
+    while True:
+        choice = input("Remove (r)ows, (c)olumns, or (b)oth? [r/c/b]: ").strip().lower()
+        if choice in ("r", "c", "b"):
+            break
+        print("Please enter r, c, or b.")
 
-    # 2. Show how many rows/cols are fully empty
-    empty_row_mask = df_clean.isna().all(axis=1)
-    empty_col_mask = df_clean.isna().all(axis=0)
+    # threshold
+    while True:
+        try:
+            p = float(input("Enter MAX allowed % of missing values (0–100): "))
+            if 0 <= p <= 100:
+                break
+            else:
+                print("Enter a number from 0 to 100.")
+        except ValueError:
+            print("Invalid number.")
 
-    print(f"Completely empty rows found: {empty_row_mask.sum()}")
-    print(f"Completely empty columns found: {empty_col_mask.sum()}")
+    threshold = p / 100.0
 
-    # 3. Drop only fully-empty rows/columns
-    df_clean = df_clean.loc[~empty_row_mask, ~empty_col_mask]
+    # compute on ORIGINAL df_clean (before any dropping)
+    row_missing_fraction = df_clean.isna().mean(axis=1)
+    col_missing_fraction = df_clean.isna().mean(axis=0)
 
-    return df_clean
+    rows_ok = row_missing_fraction <= threshold
+    cols_ok = col_missing_fraction <= threshold
+
+    if choice == "r":
+        # only rows filtered
+        return df_clean.loc[rows_ok, :]
+    elif choice == "c":
+        # only cols filtered
+        return df_clean.loc[:, cols_ok]
+    else:  # "b"
+        # both filtered, using original percentages
+        return df_clean.loc[rows_ok, cols_ok]
 
 def strip_whitespace(df: pd.DataFrame) -> pd.DataFrame:
     # print('Stripping whitespace from column names and cell values...')
@@ -227,3 +251,104 @@ def convert_units_to_SI(df: pd.DataFrame) -> pd.DataFrame:
                 df_clean[col] = pd.to_numeric(df_clean[col], errors="coerce")
 
     return df_clean
+
+def remove_duplicate_rows(df):
+    df_clean = df.copy()
+
+    # Detect duplicates anywhere in the file (not only next to each other)
+    dup_mask = df_clean.duplicated(keep="first")
+
+    # Remove ALL duplicate rows, keep only the first appearance
+    df_clean = df_clean[~dup_mask]
+
+    return df_clean
+
+def _move_rows(df: pd.DataFrame) -> pd.DataFrame:
+    df_clean = df.copy()
+
+    while True:
+        n_rows = len(df_clean)
+        print(f"\nCurrent number of rows: {n_rows}")
+        if n_rows == 0:
+            print("No rows to move.")
+            break
+
+        try:
+            src = int(input(f"Which row do you want to move? [1–{n_rows}]: "))
+            dest = int(input(f"To which position do you want to move it? [1–{n_rows}]: "))
+        except ValueError:
+            print("Please enter valid integers.")
+            continue
+
+        if not (1 <= src <= n_rows and 1 <= dest <= n_rows):
+            print("Row numbers out of range.")
+            continue
+
+        # build new order (squeezing, not deleting)
+        indices = list(range(n_rows))
+        row = indices.pop(src - 1)
+        indices.insert(dest - 1, row)
+
+        df_clean = df_clean.iloc[indices].reset_index(drop=True)
+
+        another = input("Move another row? (yes/no): ").strip().lower()
+        if another not in ("yes", "y"):
+            break
+
+    return df_clean
+
+def _move_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df_clean = df.copy()
+
+    while True:
+        cols = list(df_clean.columns)
+        n_cols = len(cols)
+
+        print("\nCurrent columns order:")
+        for i, c in enumerate(cols, 1):
+            print(f"  {i}) {c}")
+
+        if n_cols == 0:
+            print("No columns to move.")
+            break
+
+        try:
+            src = int(input(f"Which column do you want to move? [1–{n_cols}]: "))
+            dest = int(input(f"To which position do you want to move it? [1–{n_cols}]: "))
+        except ValueError:
+            print("Please enter valid integers.")
+            continue
+
+        if not (1 <= src <= n_cols and 1 <= dest <= n_cols):
+            print("Column numbers out of range.")
+            continue
+
+        col_name = cols.pop(src - 1)
+        cols.insert(dest - 1, col_name)
+
+        df_clean = df_clean[cols]
+
+        another = input("Move another column? (yes/no): ").strip().lower()
+        if another not in ("yes", "y"):
+            break
+
+    return df_clean
+
+def move_rows_or_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Let the user choose if they want to move rows or columns.
+    After each move it asks if that is all – if yes, it returns
+    the modified DataFrame (then your main script proceeds to saving).
+    """
+    df_clean = df.copy()
+
+    while True:
+        choice = input("Move (r)ows or (c)olumns? [r/c]: ").strip().lower()
+        if choice in ("r", "c"):
+            break
+        print("Please enter 'r' for rows or 'c' for columns.")
+
+    if choice == "r":
+        return _move_rows(df_clean)
+    else:
+        return _move_columns(df_clean)

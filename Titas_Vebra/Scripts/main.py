@@ -78,12 +78,14 @@ def browse_and_choose_csv():
 def choose_csv_actions():
 
     actions = [
-        "Remove empty rows and columns",
+        "Remove rows and columns",
         "Strip whitespace",
         "Normalize missing values",
         "Fix decimal commas",
         "Extract numeric value + units",
         "Convert units to SI",
+        "Clear duplicate rows",
+        "Move rows or columns",
     ]
 
     while True:
@@ -189,9 +191,9 @@ def main():
     # Importing actions
     # ----------------------------
     for action in chosen_actions:
-        if action == "Remove empty rows and columns":
-            from csv_actions import remove_empty_rows_and_columns
-            file = remove_empty_rows_and_columns(file)
+        if action == "Remove rows and columns":
+            from csv_actions import remove_rows_and_columns
+            file = remove_rows_and_columns(file)
         if action == "Strip whitespace":
             from csv_actions import strip_whitespace
             file = strip_whitespace(file)
@@ -207,6 +209,12 @@ def main():
         if action == "Convert units to SI":
             from csv_actions import convert_units_to_SI
             file = convert_units_to_SI(file)
+        if action == "Clear duplicate rows":
+            from csv_actions import remove_duplicate_rows
+            file = remove_duplicate_rows(file)
+        if action == "Move rows or columns":
+            from csv_actions import move_rows_or_columns
+            file = move_rows_or_columns(file)
 
         # Add more actions here like:
         # if action == "Strip whitespace":
