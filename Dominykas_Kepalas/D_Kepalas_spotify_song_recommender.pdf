@@ -1,0 +1,110 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2343 >>
+stream
+BT
+/F1 20 Tf
+1 0 0 1 72 740 Tm
+(Spotify Song Recommender) Tj
+0 -26 Td
+/F1 12 Tf
+(Dominykas Kepalas) Tj
+0 -18 Td
+/F1 14 Tf
+(Overview & How It Works) Tj
+0 -26 Td
+/F1 11 Tf
+0 -16 Td
+() Tj
+0 -16 Td
+(Project Snapshot) Tj
+0 -16 Td
+(A CLI-based recommender that suggests similar Spotify tracks or lists the most popular songs in) Tj
+0 -16 Td
+(a chosen genre. The system operates on a cleaned Spotify dataset, scales and weights audio) Tj
+0 -16 Td
+(features, and applies a cosine k-nearest-neighbors model to identify similar tracks. Optional) Tj
+0 -16 Td
+(visual outputs include radar charts, feature histograms, a correlation heatmap, and 2D/3D UMAP) Tj
+0 -16 Td
+(projections.) Tj
+0 -16 Td
+() Tj
+0 -16 Td
+(Data Preparation) Tj
+0 -16 Td
+(The raw Spotify dataset is preprocessed by removing unused metadata and retaining only relevant) Tj
+0 -16 Td
+(audio features. All numeric features are standardized prior to modeling to ensure fair) Tj
+0 -16 Td
+(similarity comparisons across dimensions.) Tj
+0 -16 Td
+() Tj
+0 -16 Td
+(Recommendation Logic) Tj
+0 -16 Td
+(User input follows the format 'Artist - Title'. The system attempts an exact match and falls) Tj
+0 -16 Td
+(back to fuzzy string matching when necessary. Similarity is computed using cosine distance in a) Tj
+0 -16 Td
+(weighted feature space, with optional genre-based filtering and artist-specific) Tj
+0 -16 Td
+(recommendations.) Tj
+0 -16 Td
+() Tj
+0 -16 Td
+(Command-Line Interface) Tj
+0 -16 Td
+(The application is launched via `python main.py`. Users may request similarity-based) Tj
+0 -16 Td
+(recommendations or retrieve the most popular songs within a selected genre. Interactive prompts) Tj
+0 -16 Td
+(guide the workflow, and visual comparisons can be generated on demand.) Tj
+0 -16 Td
+() Tj
+0 -16 Td
+(Visual Analysis) Tj
+0 -16 Td
+(Visualizations support exploratory analysis and interpretation. Histograms summarize feature) Tj
+0 -16 Td
+(distributions, the correlation heatmap reveals relationships between audio attributes, and UMAP) Tj
+0 -16 Td
+(projections illustrate the global structure of the song feature space.) Tj
+0 -16 Td
+() Tj
+0 -16 Td
+(Quick Start) Tj
+0 -16 Td
+(Create a Python 3.10+ environment and install pandas, scikit-learn, rapidfuzz, matplotlib, and) Tj
+0 -16 Td
+(umap-learn. Ensure the cleaned dataset is available, then run `python main.py` to begin.) Tj
+0 -16 Td
+() Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000002636 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2706
+%%EOF

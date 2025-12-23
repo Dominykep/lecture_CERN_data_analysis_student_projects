@@ -1,1 +1,0 @@
-web: node --openssl-legacy-provider dist/index.js
